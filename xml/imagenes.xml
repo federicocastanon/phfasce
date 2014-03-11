@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<fotos>
+	
+	<imagen nombrearchivo="20.jpg"  descripcion="" titulo="" />
+	<imagen nombrearchivo="3.jpg"  descripcion="" titulo="" />
+	
+	<imagen nombrearchivo="5.jpg"  descripcion="" titulo="" />
+	<imagen nombrearchivo="12.jpg" descripcion="" titulo="" />
+	<imagen nombrearchivo="13.jpg" descripcion="" titulo="" />
+	<imagen nombrearchivo="16.jpg" descripcion="" titulo="" />
+	<imagen nombrearchivo="14.jpg"  descripcion="" titulo="" />
+	<imagen nombrearchivo="15.jpg"  descripcion="" titulo="" />	
+	
+	<imagenextra1 nombrearchivo="20.jpg"  descripcion="" titulo="" />
+	<imagenextra1 nombrearchivo="3.jpg"  descripcion="" titulo="" />
+	
+	<imagenextra1 nombrearchivo="5.jpg"  descripcion="" titulo="" />
+	<imagenextra1 nombrearchivo="12.jpg" descripcion="" titulo="" />
+	<imagenextra1 nombrearchivo="13.jpg" descripcion="" titulo="" />
+	<imagenextra1 nombrearchivo="16.jpg" descripcion="" titulo="" />
+	<imagenextra1 nombrearchivo="14.jpg"  descripcion="" titulo="" />
+	<imagenextra1 nombrearchivo="15.jpg"  descripcion="" titulo="" />
+	
+	<imagenextra2 nombrearchivo="20.jpg"  descripcion="" titulo="" />
+	<imagenextra2 nombrearchivo="3.jpg"  descripcion="" titulo="" />
+	
+	<imagenextra2 nombrearchivo="5.jpg"  descripcion="" titulo="" />
+	<imagenextra2 nombrearchivo="12.jpg" descripcion="" titulo="" />
+	<imagenextra2 nombrearchivo="13.jpg" descripcion="" titulo="" />
+	<imagenextra2 nombrearchivo="16.jpg" descripcion="" titulo="" />
+	<imagenextra2 nombrearchivo="14.jpg"  descripcion="" titulo="" />
+	<imagenextra2 nombrearchivo="15.jpg"  descripcion="" titulo="" />		
+		
+</fotos>

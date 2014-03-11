@@ -1,0 +1,676 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<title>Mariana Fasce</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<meta name="description" content="" />
+		<meta name="keywords" content=""/>
+		
+		<link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
+		<link rel="shortcut icon" href="images/favicon.ico">
+		<link rel="icon" type="image/ico" href="images/favicon.ico">
+		<style>
+			span.reference{
+				position:fixed;
+				left:10px;
+				bottom:10px;
+				font-size:11px;
+			}
+			span.reference a{
+				color:#555;
+				text-decoration:none;
+				text-shadow:1px 1px 1px #fff;
+			}
+			span.reference a:hover{
+				color:#000;
+			}
+			.encabezado{
+				width: 100%;
+				height:141px;
+			}
+			.datos {
+				//background: #000 url(images/datos-bg.png) repeat-x left bottom;
+				position: absolute;
+				color: #FFF;
+				top: 0px;
+				left: 0px;
+				z-index: 100;
+				float: left;
+				max-width: 50%;
+				min-width: 300px;
+			}
+			.datos h1 {
+				outline:none;
+				padding:0px 15px 0px 50px;
+				line-height:47px;
+				text-decoration:none;
+				font-size:24px;
+				width: 100%;
+			}
+			.datos h2 {
+				outline:none;
+				padding:0px 15px 0px 50px;
+				line-height:47px;
+				text-decoration:none;
+				font-size: medium;
+				width: 100%;
+			}
+			
+		</style>
+	</head>
+	<body>
+	<div class="encabezado">
+		<div class="datos">
+			<h1>Mariana Fasce</h1>	
+			<h2>Books y Fotografía artística</h2>	
+			<h2>maru.fasce@hotmail.com</h2>
+			<h2>+549 11 5955 9304</h2>				
+		</div>
+		<div id="pd_options_bar" class="pd_options_bar">
+			<a href="#" class="masFotos">M&aacute;s fotos</a>
+			<a href="#" class="shuffle">Mezclar</a>
+			<a href="#" class="backdesk" style="display:none;">Escritorio</a>
+			<a href="#" class="viewall">Ver todas</a>
+		</div>	
+	</div>
+		<div>	
+			<a id="pd_loading" href="#" class="pd_loading"></a>
+		</div>
+
+		
+		<div id="pd_container" class="pd_container">
+			
+		</div>
+
+		<!-- The JavaScript -->
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/jquery-ui.min.js"></script>
+		<script src="js/jquery.transform-0.6.2.min.js"></script>
+		<script src="js/jquery.animate-shadow-min.js"></script>
+		
+		<script type="text/javascript">
+		
+		
+		
+			$(function() {
+				/**
+				 * idx:
+				 * index of photo that is currently hold
+				 * idxLarge:
+				 * index of photo that is currently on full mode
+				 * mouseup:
+				 * flag to use on the mouseup and mousedown events,
+				 * to help preventing the browser default selection of elements
+				 */
+				var idx,idxLarge	= -1;
+				var mouseup 		= false;
+				
+				/**
+				 * for now we hardcode the values of our thumb containers
+				 */
+				var photoW			= 184;
+				var photoH			= 205;
+				
+				/**
+				 * the photos and options container
+				 */
+				var $container 		= $('#pd_container');
+				
+				var $options		= $('#pd_options_bar');
+				
+				var $indexFoto = 1;
+				
+				
+				
+				/**
+				 * navigation current step
+				 */
+				var navPage			= 0;
+				var photosSize = 0;
+				/**
+				 * spreads the photos on the table..
+				 */
+				
+				var ie 				= false;
+				if ($.browser.msie) {
+					ie = true;
+				}
+				$.get('xml/imagenes.xml', function(d) {
+				xmlDoc = d;
+					var html = '';
+					$(d).find('imagen').each(function() {
+						var $imagen = $(this);
+						var title = $imagen.attr("titulo");
+						var description = $imagen.attr('descripcion');
+						var imagen = $imagen.attr('nombrearchivo');
+						html += '<div class="pd_photo"><div class="pd_hold">';
+						
+						html += '<img src="photos/' + imagen + '"  />';					
+						
+						html += '</div>	<span class="delete"></span></div>';
+					});					
+					$('#pd_container').html('');
+					$('#pd_container').append(html);
+					
+					/**
+				 * we do the mouseup on the document to prevent the
+				 * case when we release the mouse outside of a photo.
+				 * also, we want the photo to get smaller again,
+				 * rotate some random degrees, and also move it some pixels
+				 */
+				$(document).bind('mouseup',function(e){
+					if(mouseup){
+						mouseup 	= false;
+						var $photo 	= $container.find('.pd_photo:nth-child('+idx+')');
+						var r		= Math.floor(Math.random()*101)-50;
+						var $photoT	= parseFloat($photo.css('top'),10);
+						var $photoL	= parseFloat($photo.css('left'),10);
+						var newTop	= $photoT + r;
+						var newLeft	= $photoL + r;
+						var widthTemp = $photo.css('max-width').substr(0,3) / 1.7;
+						var heightTemp = $photo.css('max-height').substr(0,3) / 1.7;
+						if(ie)
+						var param = {
+							'max-width'		: widthTemp + 'px',
+							'max-height'	: heightTemp + 'px',
+							'top'		: newTop + 'px', 
+							'left'		: newLeft + 'px'
+						};
+						else
+						var param = {
+							'max-width'		: widthTemp + 'px',
+							'max-height'	: heightTemp + 'px',
+							'top'		: newTop + 'px',
+							'left'		: newLeft + 'px',
+							'rotate'	: r+'deg',
+							'shadow'	: '0 0 5px #000'
+						};
+						$photo.stop(true,true).animate(param,200).find('img').stop(true,true).animate({
+							'max-width'		: widthTemp + 'px',
+							'max-height'	: heightTemp + 'px'
+						},200);
+					}
+					e.preventDefault();
+				});
+				
+					
+				/**
+				 * removes the photo element from the DOM,
+				 * after showing the paper image..
+				 */
+				$container.find('.delete').bind('click',function(){
+					var $photo 			= $(this).parent();
+					var $photoT			= parseFloat($photo.css('top'),10);
+					var $photoL			= parseFloat($photo.css('left'),10);
+					var $photoZIndex	= $photo.css('z-index');
+					var $trash = $('<div />',{
+						'className'	: 'pd_paperball',
+						'style'		: 'top:' + parseInt($photoT + photoH/2) + 'px;left:' + parseInt($photoL + photoW/2) +'px;width:0px;height:0px;z-index:' + $photoZIndex
+					}).appendTo($container);
+					
+					$trash.animate({
+						'width'	: photoW + 'px',
+						'height': photoH + 'px',
+						'top'	: $photoT + 'px',
+						'left'	: $photoL + 'px'
+					},100,function(){
+						var $this = $(this);
+						setTimeout(function(){
+							$this.remove();
+						},800);
+					});
+					$photo.animate({
+						'width'	: '0px',
+						'height': '0px',
+						'top'	: $photoT + photoH/2 + 'px',
+						'left'	: $photoL + photoW/2 +'px'
+					},200,function(){
+						--photosSize;
+						$(this).remove();
+					});
+				});	
+				
+				
+					start();
+				});
+				
+				
+				
+				function start(){
+					$('#pd_loading').show();
+					photosSize 		= $container.find('.pd_photo').length;
+					var tableW 			= $container.width();
+					var tableH 			= $container.height();
+					
+					var horizontalMax	= tableW - photoW;
+					var verticalMax		= tableH - photoH;
+					
+					$('<img />').attr('src','images/paperball.png');
+					/**
+					* display all the photos on the desk, with a random rotation,
+					 * and also make them draggable.
+					 * on mouse down, we want the photo to enlarge in a few pixels,
+					 * and to rotate 0 degrees
+					 */
+					var cntPhotos = 0;
+					$container.find('.pd_photo').each(function(i){
+						var $photo 	= $(this);
+						$('<img />').load(function(){
+							++cntPhotos;
+							var $image 	= $(this);
+							
+						var r		= Math.floor(Math.random()*201)-100;//*41
+						var maxzidx = parseInt(findHighestZIndex()) + 1;
+						var param	= {
+							'top' 		: Math.floor(Math.random()*verticalMax) +'px',       
+							'left'		: Math.floor(Math.random()*horizontalMax) +'px',
+								'z-index'	: maxzidx
+						};
+							
+							$photo.css(param);
+							if(!ie)
+								$photo.transform({'rotate'	: r + 'deg'});
+							$photo.show();	
+							if(cntPhotos == photosSize){
+					bindEvents();
+								$('#pd_loading').hide();
+							}
+						}).attr('src',$photo.find('img').attr('src'));	
+					});	
+				}
+				
+				/**
+				 * grab a photo
+				 */
+				function mouseDown($photo){
+					mouseup 	= true;
+					idx			= $photo.index() + 1;
+					var widthTemp = $photo.css('max-width').substr(0,3) * 1.7;
+					var heightTemp = $photo.css('max-height').substr(0,3) * 1.7;
+					var maxzidx = parseInt(findHighestZIndex()) + 1;
+					$photo.css('z-index',maxzidx);
+					if(ie)
+					var param = {
+						'max-width'		: widthTemp + 'px',
+						'max-height'	: heightTemp + 'px'
+					};
+					else
+					var param = {
+						'max-width'		: widthTemp + 'px',
+						'max-height'	: heightTemp + 'px',
+						'rotate'	: '0deg',
+						'shadow'	: '5px 5px 15px #222'
+					};
+					$photo.stop(true,true).animate(param,100).find('img').stop(true,true).animate({
+						'max-width'		: widthTemp + 'px',
+						'max-height'	: heightTemp + 'px'
+					},100);
+				}
+				
+				
+			
+				
+				function stack(){
+					navPage 		= 0;
+					var cnt_photos 	= 0;
+					var windowsW 		= $(window).width();
+					var windowsH 		= $(window).height();
+					$container.find('.pd_photo').each(function(i){
+						var $photo 	= $(this);
+						$photo.stop(true)
+						.animate({
+							'top'	: parseInt((windowsH-100)/2 - photoH/2) + 'px',
+							'left'	: parseInt((windowsW-100)/2 - photoW/2) + 'px'
+						},800,function(){
+							$options.find('.backdesk').show();
+							var $photo = $(this);
+							++cnt_photos;
+							var $nav 	= $('<a class="pd_next_photo" style="display:none;"></a>');
+							$nav.bind('click',function(){
+								navigate();
+								$(this).remove();
+							});
+							$photo.prepend($nav);
+							$photo.draggable('destroy')
+							.find('.delete')
+							.hide()
+							.andSelf()
+							.find('.pd_hold')
+							.unbind('mousedown')
+							.bind('mousedown',function(){return false;});
+								  
+							$photo.unbind('mouseenter')
+							.bind('mouseenter',function(){
+								$nav.show();
+							})
+							.unbind('mouseleave')
+							.bind('mouseleave',function(){
+								$nav.hide();
+							});
+							$options.find('.shuffle,.viewall').unbind('click');
+							if(cnt_photos == photosSize)
+								enlarge(findElementHighestZIndex());
+						});
+					});
+				}
+				
+				
+			
+				
+				function enlarge($photo){
+					var windowsW 		= $(window).width();
+					var windowsH 		= $(window).height();
+					var widthTemp = $photo.css('max-width').substr(0,3) * 1.7;
+					var heightTemp = $photo.css('max-height').substr(0,3) * 1.7;
+					if(ie)
+					var param = {
+						'max-width'	: widthTemp + 'px',
+						'max-height': heightTemp + 'px',
+						'top'	: parseInt((windowsH-100)/2 - (photoH+200)/2) + 'px', 
+						'left'	: parseInt((windowsW-100)/2 - (photoW+200)/2) + 'px'
+					};
+					else
+					var param = {
+						'max-width'	: widthTemp + 'px',
+						'max-height': heightTemp + 'px',
+						'top'	: parseInt((windowsH-100)/2 - (photoH+200)/2) + 'px',
+						'left'	: parseInt((windowsW-100)/2 - (photoW+200)/2) + 'px',
+						'rotate': '0deg',
+						'shadow': '5px 5px 15px #222'
+					};
+					$photo.animate(param,500,function(){
+						idxLarge = $(this).index();
+					}).find('img').animate({
+						'max-width'	: widthTemp + 'px',
+						'max-height': heightTemp + 'px'
+					},500);
+				}
+				
+				/**
+				 * back to desk
+				 */
+				function disperse(){
+					var windowsW 		= $(window).width();
+					var windowsH 		= $(window).height();
+					
+					$container.find('.pd_photo').each(function(i){
+						var $photo 		= $(this);
+						//if it is the current large photo:
+						if($photo.index() == idxLarge){
+							if(ie)
+							var param = {
+								'top'		: parseInt((windowsH-100)/2 - photoH/2) + 'px', 
+								'left'		: parseInt((windowsW-100)/2 - photoW/2) + 'px',
+								'max-width' : '370px',
+								'max-height': '370px'
+							};
+							else
+							var param = {
+								'top'		: parseInt((windowsH-100)/2 - photoH/2) + 'px', 
+								'left'		: parseInt((windowsW-100)/2 - photoW/2) + 'px',
+								'max-width' : '370px',
+								'max-height': '370px'
+							};
+							$photo.stop(true).animate(param,500, function(){
+								shuffle();
+								$options.find('.viewall').show();
+							}).find('img').animate({
+								'max-width' : '370px',
+								'max-height': '370px'
+							},500);
+						}
+					});
+					$container.find('.pd_next_photo').remove();
+					bindEvents();
+				}
+				
+				function bindEvents(){
+					$options.find('.shuffle').unbind('click').bind('click',function(e){
+						if(photosSize == 0) return;
+						shuffle();
+						e.preventDefault();
+					}).andSelf().find('.viewall').unbind('click').bind('click',function(e){
+						var $this = $(this);
+						if(photosSize == 0) return;
+						stack();
+						$this.hide();
+						e.preventDefault();
+					}).andSelf().find('.backdesk').unbind('click').bind('click',function(e){
+						var $this = $(this);
+						if(photosSize == 0) return;
+						disperse();
+						$this.hide();
+						e.preventDefault();
+					}).andSelf().find('.masFotos').unbind('click').bind('click',function(){
+						masFotos();
+					});
+					
+					
+					$container.find('.pd_photo').each(function(i){
+						var $photo = $(this);
+						$photo.draggable({
+							containment	: '#pd_container'
+						}).find('.delete')
+						.show()
+					}).find('.pd_hold').unbind('mousedown').bind('mousedown',function(e){
+						var $photo 	= $(this).parent();
+						mouseDown($photo);
+						e.preventDefault();
+					});
+				}
+				
+				function navigate(){
+					if(photosSize == 0) return;
+					
+					var tableW 			= $container.width();
+					var tableH 			= $container.height();
+					
+					var horizontalMax	= tableW - photoW;
+					var verticalMax		= tableH - photoH;
+					
+					var $photo 			= $container.find('.pd_photo:nth-child('+parseInt(idxLarge+1)+')');
+					var r				= Math.floor(Math.random()*201)-100;//*41
+					if(ie)
+					var param = {
+						'top' 		: Math.floor(Math.random()*verticalMax) +'px',       
+						'left'		: Math.floor(Math.random()*horizontalMax) +'px',
+						'max-width' : '370px',
+						'max-height': '370px'
+					};
+					else
+					var param = {
+						'top' 		: Math.floor(Math.random()*verticalMax) +'px',
+						'left'		: Math.floor(Math.random()*horizontalMax) +'px',
+						'max-width' : '370px',
+						'max-height': '370px',
+						'rotate'	: r+'deg',
+						'shadow'	: '1px 1px 5px #555'
+					};
+					$photo.stop(true).animate(param,500,function(){
+						++navPage;
+						var $photo = $(this);
+						
+						$container.append($photo.css('z-index',1));
+						if(navPage < photosSize)
+							enlarge(findElementHighestZIndex());
+						else{ //last one
+							$options.find('.backdesk').hide();
+							$options.find('.viewall').show();
+							bindEvents();
+						}
+					}).find('img').animate({
+						'max-width' : '370px',
+						'max-height': '370px'
+					},500);
+				}
+				
+				function shuffle(){
+					var tableW 			= $container.width();
+					var tableH 			= $container.height();
+					
+					var horizontalMax	= tableW - photoW;
+					var verticalMax		= tableH - photoH;
+					$container.find('.pd_photo').each(function(i){
+						var $photo = $(this);
+						var r		= Math.floor(Math.random()*301)-100;//*41
+						if(ie)
+						var param = {
+							'top' 		: Math.floor(Math.random()*verticalMax) +'px',       
+							'left'		: Math.floor(Math.random()*horizontalMax) +'px'
+						};
+						else
+						var param = {
+							'top' 		: Math.floor(Math.random()*verticalMax) +'px',
+							'left'		: Math.floor(Math.random()*horizontalMax) +'px',
+							'rotate'	: r+'deg'
+						};
+						$photo.animate(param,800);	
+					});
+				}
+				
+				function masFotos(){						
+					$.get('xml/imagenes.xml', function(d) {
+						xmlDoc = d;
+						var html = '';
+						
+						$(d).find('imagenextra' + $indexFoto).each(function() {
+							var $imagen = $(this);						
+							var title = $imagen.attr("titulo");
+							var description = $imagen.attr('descripcion');
+							var imagen = $imagen.attr('nombrearchivo');
+							html += '<div class="pd_photo"><div class="pd_hold">';
+							
+							html += '<img src="photos/' + imagen + '"  />';					
+							
+							html += '</div>	<span class="delete"></span></div>';
+						});
+											
+						$('#pd_container').append(html);
+				
+					
+					
+					$(document).unbind('mouseup').bind('mouseup',function(e){
+					if(mouseup){
+						mouseup 	= false;
+						var $photo 	= $container.find('.pd_photo:nth-child('+idx+')');
+						var r		= Math.floor(Math.random()*101)-50;
+						var $photoT	= parseFloat($photo.css('top'),10);
+						var $photoL	= parseFloat($photo.css('left'),10);
+						var newTop	= $photoT + r;
+						var newLeft	= $photoL + r;
+						var widthTemp = $photo.css('max-width').substr(0,3) / 1.7;
+						var heightTemp = $photo.css('max-height').substr(0,3) / 1.7;
+						if(ie)
+						var param = {
+							'max-width'		: widthTemp + 'px',
+							'max-height'	: heightTemp + 'px',
+							'top'		: newTop + 'px', 
+							'left'		: newLeft + 'px'
+						};
+						else
+						var param = {
+							'max-width'		: widthTemp + 'px',
+							'max-height'	: heightTemp + 'px',
+							'top'		: newTop + 'px',
+							'left'		: newLeft + 'px',
+							'rotate'	: r+'deg',
+							'shadow'	: '0 0 5px #000'
+						};
+						$photo.stop(true,true).animate(param,200).find('img').stop(true,true).animate({
+							'max-width'		: widthTemp + 'px',
+							'max-height'	: heightTemp + 'px'
+						},200);
+					}
+					e.preventDefault();
+				});
+				
+					
+				/**
+				 * removes the photo element from the DOM,
+				 * after showing the paper image..
+				 */
+				$container.find('.delete').unbind('click').bind('click',function(){
+					var $photo 			= $(this).parent();
+					var $photoT			= parseFloat($photo.css('top'),10);
+					var $photoL			= parseFloat($photo.css('left'),10);
+					var $photoZIndex	= $photo.css('z-index');
+					var $trash = $('<div />',{
+						'className'	: 'pd_paperball',
+						'style'		: 'top:' + parseInt($photoT + photoH/2) + 'px;left:' + parseInt($photoL + photoW/2) +'px;width:0px;height:0px;z-index:' + $photoZIndex
+					}).appendTo($container);
+					
+					$trash.animate({
+						'width'	: photoW + 'px',
+						'height': photoH + 'px',
+						'top'	: $photoT + 'px',
+						'left'	: $photoL + 'px'
+					},100,function(){
+						var $this = $(this);
+						setTimeout(function(){
+							$this.remove();
+						},800);
+					});
+					$photo.animate({
+						'width'	: '0px',
+						'height': '0px',
+						'top'	: $photoT + photoH/2 + 'px',
+						'left'	: $photoL + photoW/2 +'px'
+					},200,function(){
+						--photosSize;
+						$(this).remove();
+					});
+				});	
+				
+					$indexFoto++;
+					var siguientes = $(d).find('imagenextra' + $indexFoto);
+					if(siguientes.length < 1){
+						$('.masFotos').hide();
+					}
+					start();
+					
+					
+				});	
+					
+				
+				}
+				
+				
+				
+				function findHighestZIndex(){
+					var photos = $container.find('.pd_photo');
+					var highest = 0;
+					photos.each(function(){
+						var $photo = $(this);
+						var zindex = $photo.css('z-index');
+						if (parseInt(zindex) > highest) {
+							highest = zindex;
+						}
+					});
+					return highest;
+				}
+				
+				function findElementHighestZIndex(){
+					var photos = $container.find('.pd_photo');
+					var highest = 0;
+					var $elem;
+					photos.each(function(){
+						var $photo = $(this);
+						var zindex = $photo.css('z-index');
+						if (parseInt(zindex) > highest) {
+							highest = zindex;
+							$elem	= $photo;
+						}
+					});
+					return $elem;
+				}
+				
+				// Array Remove - By John Resig (MIT Licensed)
+				Array.prototype.remove = function(from, to) {
+					var rest = this.slice((to || from) + 1 || this.length);
+					this.length = from < 0 ? this.length + from : from;
+					return this.push.apply(this, rest);
+				};
+			});
+		</script>
+	</body>
+</html>
